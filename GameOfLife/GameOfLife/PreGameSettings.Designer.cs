@@ -47,8 +47,6 @@
             groupBox7 = new GroupBox();
             textBox3 = new TextBox();
             splitContainer1 = new SplitContainer();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            gameFieldRepresentation = new TableLayoutPanel();
             toolTip1 = new ToolTip(components);
             mainMenuTable.SuspendLayout();
             groupBox5.SuspendLayout();
@@ -63,9 +61,7 @@
             groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
-            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // mainMenuTable
@@ -219,10 +215,11 @@
             // 
             numericUpDown1.Dock = DockStyle.Fill;
             numericUpDown1.Location = new Point(3, 27);
+            numericUpDown1.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(554, 31);
             numericUpDown1.TabIndex = 0;
-            numericUpDown1.Value = new decimal(new int[] { 5, 0, 0, 0 });
+            numericUpDown1.Value = new decimal(new int[] { 25, 0, 0, 0 });
             numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
             // 
             // groupBox6
@@ -278,6 +275,7 @@
             textBox3.PlaceholderText = ">50";
             textBox3.Size = new Size(554, 31);
             textBox3.TabIndex = 0;
+            textBox3.Leave += textBox3_Leave;
             // 
             // splitContainer1
             // 
@@ -289,54 +287,10 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.Controls.Add(mainMenuTable);
-            // 
-            // splitContainer1.Panel2
-            // 
-            splitContainer1.Panel2.Controls.Add(tableLayoutPanel1);
             splitContainer1.Size = new Size(1128, 797);
             splitContainer1.SplitterDistance = 656;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 2;
-            // 
-            // tableLayoutPanel1
-            // 
-            tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10.7602F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 77.8508F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 11.388998F));
-            tableLayoutPanel1.Controls.Add(gameFieldRepresentation, 1, 1);
-            tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(4, 5, 4, 5);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 3;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.8631191F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 70.37948F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 14.7574053F));
-            tableLayoutPanel1.Size = new Size(467, 797);
-            tableLayoutPanel1.TabIndex = 0;
-            // 
-            // gameFieldRepresentation
-            // 
-            gameFieldRepresentation.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-            gameFieldRepresentation.ColumnCount = 5;
-            gameFieldRepresentation.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.Dock = DockStyle.Fill;
-            gameFieldRepresentation.Location = new Point(54, 123);
-            gameFieldRepresentation.Margin = new Padding(4, 5, 4, 5);
-            gameFieldRepresentation.Name = "gameFieldRepresentation";
-            gameFieldRepresentation.RowCount = 5;
-            gameFieldRepresentation.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            gameFieldRepresentation.Size = new Size(355, 550);
-            gameFieldRepresentation.TabIndex = 0;
             // 
             // PreGameSettings
             // 
@@ -364,10 +318,8 @@
             groupBox7.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
-            splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
-            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -377,8 +329,6 @@
         private Label preGameSettingsTitle;
         private SplitContainer splitContainer1;
         private StatusStrip statusStrip1;
-        private TableLayoutPanel tableLayoutPanel1;
-        private TableLayoutPanel gameFieldRepresentation;
         private Button startButton;
         private GroupBox groupBox1;
         private NumericUpDown numericUpDown1;

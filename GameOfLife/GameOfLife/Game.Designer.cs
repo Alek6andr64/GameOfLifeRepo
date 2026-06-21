@@ -2,15 +2,8 @@
 {
     partial class Game
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,203 +15,193 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            gameField = new TableLayoutPanel();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            groupBox1 = new GroupBox();
-            progressBar1 = new ProgressBar();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            label1 = new Label();
-            button4 = new Button();
-            timer1 = new System.Windows.Forms.Timer(components);
-            tableLayoutPanel1.SuspendLayout();
-            groupBox1.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
+            gameField = new Panel();
+            tlpTopMenu = new TableLayoutPanel();
+            grpMovesInfo = new GroupBox();
+            pbGameProgress = new ProgressBar();
+            tlpControlButtons = new TableLayoutPanel();
+            btnPause = new Button();
+            btnNextStep = new Button();
+            btnStartAuto = new Button();
+            lblCellsStatus = new Label();
+            btnStartGame = new Button();
+            gameTimer = new System.Windows.Forms.Timer(components);
+            tlpTopMenu.SuspendLayout();
+            grpMovesInfo.SuspendLayout();
+            tlpControlButtons.SuspendLayout();
             SuspendLayout();
             // 
             // gameField
             // 
-            gameField.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-            gameField.ColumnCount = 2;
-            gameField.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            gameField.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             gameField.Dock = DockStyle.Fill;
-            gameField.Location = new Point(0, 0);
+            gameField.Location = new Point(0, 83);
             gameField.Margin = new Padding(4, 5, 4, 5);
             gameField.Name = "gameField";
-            gameField.RowCount = 2;
-            gameField.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            gameField.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            gameField.Size = new Size(1029, 690);
+            gameField.Size = new Size(1029, 607);
             gameField.TabIndex = 1;
+            gameField.Resize += gameField_Resize;
             // 
-            // tableLayoutPanel1
+            // tlpTopMenu
             // 
-            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
-            tableLayoutPanel1.ColumnCount = 4;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 1, 0);
-            tableLayoutPanel1.Controls.Add(label1, 2, 0);
-            tableLayoutPanel1.Controls.Add(button4, 3, 0);
-            tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Margin = new Padding(4, 5, 4, 5);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1029, 83);
-            tableLayoutPanel1.TabIndex = 0;
+            tlpTopMenu.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
+            tlpTopMenu.ColumnCount = 4;
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tlpTopMenu.Controls.Add(grpMovesInfo, 0, 0);
+            tlpTopMenu.Controls.Add(tlpControlButtons, 1, 0);
+            tlpTopMenu.Controls.Add(lblCellsStatus, 2, 0);
+            tlpTopMenu.Controls.Add(btnStartGame, 3, 0);
+            tlpTopMenu.Dock = DockStyle.Top;
+            tlpTopMenu.Location = new Point(0, 0);
+            tlpTopMenu.Margin = new Padding(4, 5, 4, 5);
+            tlpTopMenu.Name = "tlpTopMenu";
+            tlpTopMenu.RowCount = 1;
+            tlpTopMenu.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpTopMenu.Size = new Size(1029, 83);
+            tlpTopMenu.TabIndex = 0;
             // 
-            // groupBox1
+            // grpMovesInfo
             // 
-            groupBox1.Controls.Add(progressBar1);
-            groupBox1.Dock = DockStyle.Fill;
-            groupBox1.Location = new Point(6, 7);
-            groupBox1.Margin = new Padding(4, 5, 4, 5);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(4, 5, 4, 5);
-            groupBox1.Size = new Size(246, 69);
-            groupBox1.TabIndex = 1;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Осталось ходов:";
+            grpMovesInfo.Controls.Add(pbGameProgress);
+            grpMovesInfo.Dock = DockStyle.Fill;
+            grpMovesInfo.Location = new Point(6, 7);
+            grpMovesInfo.Margin = new Padding(4, 5, 4, 5);
+            grpMovesInfo.Name = "grpMovesInfo";
+            grpMovesInfo.Padding = new Padding(4, 5, 4, 5);
+            grpMovesInfo.Size = new Size(246, 69);
+            grpMovesInfo.TabIndex = 1;
+            grpMovesInfo.TabStop = false;
+            grpMovesInfo.Text = "Осталось ходов:";
             // 
-            // progressBar1
+            // pbGameProgress
             // 
-            progressBar1.BackColor = SystemColors.Control;
-            progressBar1.Dock = DockStyle.Fill;
-            progressBar1.ForeColor = SystemColors.ActiveCaption;
-            progressBar1.Location = new Point(4, 29);
-            progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(238, 35);
-            progressBar1.Style = ProgressBarStyle.Continuous;
-            progressBar1.TabIndex = 0;
+            pbGameProgress.BackColor = SystemColors.Control;
+            pbGameProgress.Dock = DockStyle.Fill;
+            pbGameProgress.ForeColor = SystemColors.ActiveCaption;
+            pbGameProgress.Location = new Point(4, 29);
+            pbGameProgress.Name = "pbGameProgress";
+            pbGameProgress.Size = new Size(238, 35);
+            pbGameProgress.Style = ProgressBarStyle.Continuous;
+            pbGameProgress.TabIndex = 0;
             // 
-            // tableLayoutPanel2
+            // tlpControlButtons
             // 
-            tableLayoutPanel2.ColumnCount = 3;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanel2.Controls.Add(button1, 0, 0);
-            tableLayoutPanel2.Controls.Add(button2, 1, 0);
-            tableLayoutPanel2.Controls.Add(button3, 2, 0);
-            tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(261, 5);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 1;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(248, 73);
-            tableLayoutPanel2.TabIndex = 2;
+            tlpControlButtons.ColumnCount = 3;
+            tlpControlButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpControlButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpControlButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tlpControlButtons.Controls.Add(btnPause, 0, 0);
+            tlpControlButtons.Controls.Add(btnNextStep, 1, 0);
+            tlpControlButtons.Controls.Add(btnStartAuto, 2, 0);
+            tlpControlButtons.Dock = DockStyle.Fill;
+            tlpControlButtons.Location = new Point(261, 5);
+            tlpControlButtons.Name = "tlpControlButtons";
+            tlpControlButtons.RowCount = 1;
+            tlpControlButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpControlButtons.Size = new Size(248, 73);
+            tlpControlButtons.TabIndex = 2;
             // 
-            // button1
+            // btnPause
             // 
-            button1.BackgroundImageLayout = ImageLayout.Zoom;
-            button1.Dock = DockStyle.Fill;
-            button1.Enabled = false;
-            button1.ForeColor = SystemColors.ControlText;
-            button1.Image = Properties.Resources.pause_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            button1.Location = new Point(3, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(76, 67);
-            button1.TabIndex = 0;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btnPause.BackgroundImageLayout = ImageLayout.Zoom;
+            btnPause.Dock = DockStyle.Fill;
+            btnPause.Enabled = false;
+            btnPause.ForeColor = SystemColors.ControlText;
+            btnPause.Image = Properties.Resources.pause_24dp_000000_FILL0_wght400_GRAD0_opsz24;
+            btnPause.Location = new Point(3, 3);
+            btnPause.Name = "btnPause";
+            btnPause.Size = new Size(76, 67);
+            btnPause.TabIndex = 0;
+            btnPause.UseVisualStyleBackColor = true;
+            btnPause.Click += btnPause_Click;
             // 
-            // button2
+            // btnNextStep
             // 
-            button2.BackgroundImageLayout = ImageLayout.Zoom;
-            button2.Dock = DockStyle.Fill;
-            button2.Enabled = false;
-            button2.Image = Properties.Resources.keyboard_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            button2.Location = new Point(85, 3);
-            button2.Name = "button2";
-            button2.Size = new Size(76, 67);
-            button2.TabIndex = 1;
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnNextStep.BackgroundImageLayout = ImageLayout.Zoom;
+            btnNextStep.Dock = DockStyle.Fill;
+            btnNextStep.Enabled = false;
+            btnNextStep.Image = Properties.Resources.keyboard_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
+            btnNextStep.Location = new Point(85, 3);
+            btnNextStep.Name = "btnNextStep";
+            btnNextStep.Size = new Size(76, 67);
+            btnNextStep.TabIndex = 1;
+            btnNextStep.UseVisualStyleBackColor = true;
+            btnNextStep.Click += btnNextStep_Click;
             // 
-            // button3
+            // btnStartAuto
             // 
-            button3.BackgroundImageLayout = ImageLayout.Zoom;
-            button3.Dock = DockStyle.Fill;
-            button3.Enabled = false;
-            button3.Image = Properties.Resources.keyboard_double_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            button3.Location = new Point(167, 3);
-            button3.Name = "button3";
-            button3.Size = new Size(78, 67);
-            button3.TabIndex = 2;
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            btnStartAuto.BackgroundImageLayout = ImageLayout.Zoom;
+            btnStartAuto.Dock = DockStyle.Fill;
+            btnStartAuto.Enabled = false;
+            btnStartAuto.Image = Properties.Resources.keyboard_double_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
+            btnStartAuto.Location = new Point(167, 3);
+            btnStartAuto.Name = "btnStartAuto";
+            btnStartAuto.Size = new Size(78, 67);
+            btnStartAuto.TabIndex = 2;
+            btnStartAuto.UseVisualStyleBackColor = true;
+            btnStartAuto.Click += btnStartAuto_Click;
             // 
-            // label1
+            // lblCellsStatus
             // 
-            label1.AutoSize = true;
-            label1.Dock = DockStyle.Fill;
-            label1.Location = new Point(518, 2);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(246, 79);
-            label1.TabIndex = 0;
-            label1.Text = "Осталось клеток: 0";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
+            lblCellsStatus.AutoSize = true;
+            lblCellsStatus.Dock = DockStyle.Fill;
+            lblCellsStatus.Location = new Point(518, 2);
+            lblCellsStatus.Margin = new Padding(4, 0, 4, 0);
+            lblCellsStatus.Name = "lblCellsStatus";
+            lblCellsStatus.Size = new Size(246, 79);
+            lblCellsStatus.TabIndex = 0;
+            lblCellsStatus.Text = "Осталось клеток: 0";
+            lblCellsStatus.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // button4
+            // btnStartGame
             // 
-            button4.Dock = DockStyle.Fill;
-            button4.Location = new Point(773, 5);
-            button4.Name = "button4";
-            button4.Size = new Size(251, 73);
-            button4.TabIndex = 3;
-            button4.Text = "Начать";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            btnStartGame.Dock = DockStyle.Fill;
+            btnStartGame.Location = new Point(773, 5);
+            btnStartGame.Name = "btnStartGame";
+            btnStartGame.Size = new Size(251, 73);
+            btnStartGame.TabIndex = 3;
+            btnStartGame.Text = "Начать";
+            btnStartGame.UseVisualStyleBackColor = true;
+            btnStartGame.Click += btnStartGame_Click;
             // 
-            // timer1
+            // gameTimer
             // 
-            timer1.Interval = 1000;
+            gameTimer.Interval = 1500;
             // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(9F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1029, 690);
-            Controls.Add(tableLayoutPanel1);
             Controls.Add(gameField);
+            Controls.Add(tlpTopMenu);
             Font = new Font("Impact", 14.25F);
             Margin = new Padding(4, 5, 4, 5);
             Name = "Game";
             Text = "Game";
-            tableLayoutPanel1.ResumeLayout(false);
-            tableLayoutPanel1.PerformLayout();
-            groupBox1.ResumeLayout(false);
-            tableLayoutPanel2.ResumeLayout(false);
+            tlpTopMenu.ResumeLayout(false);
+            tlpTopMenu.PerformLayout();
+            grpMovesInfo.ResumeLayout(false);
+            tlpControlButtons.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-        private TableLayoutPanel gameField;
-        private TableLayoutPanel tableLayoutPanel1;
-        private Label label1;
-        private GroupBox groupBox1;
-        private ProgressBar progressBar1;
-        private TableLayoutPanel tableLayoutPanel2;
-        private Button button1;
-        private Button button2;
-        private Button button3;
-        private Button button4;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Panel gameField;
+        private System.Windows.Forms.TableLayoutPanel tlpTopMenu;
+        private System.Windows.Forms.Label lblCellsStatus;
+        private System.Windows.Forms.GroupBox grpMovesInfo;
+        private System.Windows.Forms.ProgressBar pbGameProgress;
+        private System.Windows.Forms.TableLayoutPanel tlpControlButtons;
+        private System.Windows.Forms.Button btnPause;
+        private System.Windows.Forms.Button btnNextStep;
+        private System.Windows.Forms.Button btnStartAuto;
+        private System.Windows.Forms.Button btnStartGame;
+        private System.Windows.Forms.Timer gameTimer;
     }
 }

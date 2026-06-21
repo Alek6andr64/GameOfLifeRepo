@@ -1,125 +1,239 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Label = System.Windows.Forms.Label;
 
 namespace GameOfLife
 {
     public partial class Game : Form
     {
+
         private Random random = new Random();
+
+        // Параметры игры
         private int aliveCells = 0;
         private int availableCells;
         private int stepCount;
         private int fieldSize;
+        private int targetCells;
+        private string targetType;
         private int step = 0;
-        private bool isGameStarted = false;         
+        private bool isGameStarted = false;
 
-        public Game(int fieldSize, int availableCells, int stepCount)
+        // Двумерный массив кнопок игрового поля
+        private Button[,] cells;
+
+        // Текст экрана загрузки
+        private Label lblLoading;
+
+        // Текст цели
+        Label lblTargetScore;
+
+        public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType)
         {
             InitializeComponent();
 
             this.availableCells = availableCells;
             this.stepCount = stepCount;
             this.fieldSize = fieldSize;
+            this.targetCells = targetCells;
+            this.targetType = targetType;
 
-            gameField.ColumnStyles.Clear();
-            gameField.RowStyles.Clear();
+            // Настройка элементов игры
+            pbGameProgress.Maximum = stepCount;
+            grpMovesInfo.Text = $"Осталось ходов: {stepCount}  (из {stepCount})";
+            lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
 
-            gameField.ColumnCount = fieldSize;
-            gameField.RowCount = fieldSize;
+            // Подписка на событие авто симуляции
+            gameTimer.Tick += timer_Step;
 
-            float percent = 100f / fieldSize;
-            for (int i = 0; i < gameField.ColumnCount; i++)
+            // Создаем кнопки
+            InitializeLoadingLabel();
+            InitializeGameGrid();
+        }
+
+        private void InitializeGameGrid()
+        {
+            cells = new Button[fieldSize, fieldSize];
+
+            // Вычисляем иразмер кнопки по минимальной стороне панели
+            int minDimension = Math.Min(gameField.Width, gameField.Height);
+            int buttonSize = minDimension / fieldSize;
+
+            // Защита от деления на ноль
+            if (buttonSize == 0) buttonSize = 1; 
+
+            // Вычисляем отступы для центрирования сетки
+            int offsetX = (gameField.Width - (buttonSize * fieldSize)) / 2;
+            int offsetY = (gameField.Height - (buttonSize * fieldSize)) / 2;
+
+            // Замораживаем интерфейс 
+            gameField.SuspendLayout();
+
+            for (int row = 0; row < fieldSize; row++)
             {
-                gameField.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, percent));
-            }
-
-            for (int i = 0; i < gameField.RowCount; i++)
-            {
-                gameField.RowStyles.Add(new RowStyle(SizeType.Percent, percent));
-            }
-
-            progressBar1.Maximum = stepCount;
-            groupBox1.Text = $"Осталось ходов: {stepCount}  (из {stepCount})";
-            label1.Text = $"Доступно для установки: {availableCells}";
-
-            timer1.Tick += timer_Step;
-
-            for (int i = 0; i < gameField.RowCount; i++)
-            {
-                for (int j = 0; j < gameField.ColumnCount; j++)
+                for (int col = 0; col < fieldSize; col++)
                 {
-                    Panel cell = new Panel();
-                    cell.Margin = new Padding(1); 
-                    cell.BackColor = Color.White;
-                    if (random.Next(0,2)  == 1)
+                    Button cell = new Button();
+                    cell.Size = new Size(buttonSize, buttonSize);
+
+                    // Устанавливаем координаты кнопок
+                    cell.Location = new Point(offsetX + col * buttonSize, offsetY + row * buttonSize);
+                    cell.FlatStyle = FlatStyle.Flat;
+
+                    // Задаем цвета кнопок
+                    /*
+                    if (random.Next(0, 2) == 1)
                     {
                         cell.BackColor = Color.Black;
                     }
-                    cell.Dock = DockStyle.Fill;
+                    else
+                    {
+                        */
+                        cell.BackColor = Color.White;
+                    //}
+
+                    // Подписка на клик по клетке
                     cell.Click += cell_Click;
 
-                    gameField.Controls.Add(cell, j, i);
+                    cells[row, col] = cell;
+                    gameField.Controls.Add(cell);
                 }
+            }
+
+            // Разамораживаем интерфейс 
+            gameField.ResumeLayout(true);
+        }
+
+        private void InitializeLoadingLabel()
+        {
+            // Создаем текст загрузки
+            lblLoading = new Label();
+            lblLoading.Text = "Пожалуйста, подождите.\nИдет отрисовка сетки...";
+            lblLoading.ForeColor = Color.DimGray;
+            lblLoading.TextAlign = ContentAlignment.MiddleCenter;
+            lblLoading.AutoSize = true;
+            lblLoading.Visible = false;
+
+            this.Controls.Add(lblLoading);
+        }
+
+        private void ShowLoading(bool show)
+        {
+            if (show)
+            {
+                // Скрываем поле с кнопками 
+                gameField.Visible = false;
+
+                // Центрируем надпись
+                lblLoading.Location = new Point(
+                    (this.ClientSize.Width - lblLoading.Width) / 2,
+                    (this.ClientSize.Height - lblLoading.Height) / 2 + 40
+                );
+
+                // Делаем метку видимой и выводим ее на передний план
+                lblLoading.Visible = true;
+                lblLoading.BringToFront();
+
+                // Принудительно заставляем бновить интерфейс 
+                Application.DoEvents();
+            }
+            else
+            {
+                // Скрываем метку и возвращаем видимость игрового поля
+                lblLoading.Visible = false;
+                gameField.Visible = true;
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void gameField_Resize(object sender, EventArgs e)
+        {
+            if (cells == null) return;
+
+            // Включаем режим загрузки
+            ShowLoading(true);
+
+            // Пересчитываем размеры под новые габариты окна
+            int minDimension = Math.Min(gameField.Width, gameField.Height);
+            int buttonSize = minDimension / fieldSize;
+            if (buttonSize == 0) buttonSize = 1;
+
+            // Вычисляем отступы для центрирования сетки
+            int offsetX = (gameField.Width - (buttonSize * fieldSize)) / 2;
+            int offsetY = (gameField.Height - (buttonSize * fieldSize)) / 2;
+
+            // Отключаем обновления кнопок
+            gameField.SuspendLayout();
+
+            for (int row = 0; row < fieldSize; row++)
+            {
+                for (int col = 0; col < fieldSize; col++)
+                {
+                    cells[row, col].Size = new Size(buttonSize, buttonSize);
+                    cells[row, col].Location = new Point(offsetX + col * buttonSize, offsetY + row * buttonSize);
+                }
+            }
+
+            // Выключаем режим загрузки
+            gameField.ResumeLayout(true);
+            ShowLoading(false);
+        }
+
+        private void btnStartGame_Click(object sender, EventArgs e)
         {
             isGameStarted = true;
 
-            button1.Enabled = true;
-            button2.Enabled = true;
-            button3.Enabled = true;
+            // Активируем кнопки 
+            btnPause.Enabled = true;
+            btnNextStep.Enabled = true;
+            btnStartAuto.Enabled = true;
 
-            button4.Hide();
+            // Скрываем кнопку старта
+            btnStartGame.Hide();
 
-            label1.Text = $"Текущее число клеток: {aliveCells}";
+            lblCellsStatus.Text = $"Текущее число клеток: {aliveCells}";
 
-            Label label2 = new Label();
-            label2.AutoSize = true;
-            label2.Dock = DockStyle.Fill;
-            label2.TextAlign = ContentAlignment.MiddleCenter;
-            tableLayoutPanel1.Controls.Add(label2, 3, 0);
-            label2.Text = $"Цель: 0";
+            // Текст цели раунда
+            lblTargetScore = new Label();
+            lblTargetScore.AutoSize = true;
+            lblTargetScore.Dock = DockStyle.Fill;
+            lblTargetScore.TextAlign = ContentAlignment.MiddleCenter;
+            tlpTopMenu.Controls.Add(lblTargetScore, 3, 0);
+            lblTargetScore.Text = $"Цель: 0";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnPause_Click(object sender, EventArgs e)
         {
-            if (timer1.Enabled)
-                timer1.Stop();
+            // Останавливаем таймер, если он запущен
+            if (gameTimer.Enabled)
+                gameTimer.Stop();
         }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void btnNextStep_Click(object sender, EventArgs e)
         {
+            // Симулируем шаг
             game_Step();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnStartAuto_Click(object sender, EventArgs e)
         {
-            if (!timer1.Enabled)
-                timer1.Start();
+            // Авто симуляция
+            if (!gameTimer.Enabled)
+                gameTimer.Start();
         }
 
         private void game_Step()
         {
+            // Логика одного шага
             if (step < stepCount)
             {
                 step++;
-                progressBar1.Value = step;
-                groupBox1.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
+                pbGameProgress.Value = step;
+                grpMovesInfo.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
                 simulate();
             }
             else
             {
-                timer1.Stop();
+                gameTimer.Stop();
+                end_Game();
             }
         }
 
@@ -128,49 +242,57 @@ namespace GameOfLife
             bool[,] nextState = new bool[fieldSize, fieldSize];
             aliveCells = 0;
 
-            for (int i = 0; i < fieldSize; i++)
-            {
-                for (int j = 0; j < fieldSize; j++)
-                {
-                    int neighbors = countNeighbors(j, i);
-                    Control cell = gameField.GetControlFromPosition(j, i);
-                    if (cell == null) continue;
+            // Замораживаем интерфейс 
+            gameField.SuspendLayout();
 
-                    bool isAlive = (cell.BackColor == Color.Black);
+            // Создание поля для следующего шага
+            for (int row = 0; row < fieldSize; row++)
+            {
+                for (int col = 0; col < fieldSize; col++)
+                {
+                    int neighbors = countNeighbors(col, row);
+                    bool isAlive = (cells[row, col].BackColor == Color.Black);
 
                     if (!isAlive && neighbors == 3)
                     {
-                        nextState[i, j] = true;
+                        nextState[row, col] = true;
                         aliveCells++;
                     }
                     else if (isAlive && (neighbors == 2 || neighbors == 3))
                     {
-                        nextState[i, j] = true;
+                        nextState[row, col] = true;
                         aliveCells++;
                     }
                     else
                     {
-                        nextState[i, j] = false;
+                        nextState[row, col] = false;
                     }
                 }
             }
 
-            for (int i = 0; i < fieldSize; i++)
+            // Перекрашивание кнопок согласно правилам
+            for (int row = 0; row < fieldSize; row++)
             {
-                for (int j = 0; j < fieldSize; j++)
+                for (int col = 0; col < fieldSize; col++)
                 {
-                    Control cell = gameField.GetControlFromPosition(j, i);
-                    if (cell == null) continue;
-
-                    cell.BackColor = nextState[i, j] ? Color.Black : Color.White;
+                    cells[row, col].BackColor = nextState[row, col] ? Color.Black : Color.White;
                 }
             }
 
-            label1.Text = $"Текущее число клеток: {aliveCells}";
+            // Размораживаем интерфейс
+            gameField.ResumeLayout(true);
+
+            lblCellsStatus.Text = $"Текущее число клеток: {aliveCells}";
+
+            if (aliveCells == 0)
+            {
+                end_Game();
+            }
         }
 
         private int countNeighbors(int x, int y)
         {
+            // Подсчитываем соседние живые клетки
             int count = 0;
 
             for (int i = -1; i <= 1; i++)
@@ -180,14 +302,14 @@ namespace GameOfLife
                     if (i == 0 && j == 0)
                         continue;
 
-                    int neighborX = x + i;
-                    int neighborY = y + j;
+                    int neighborX = x + j;
+                    int neighborY = y + i;
 
+                    // Проверка на выход за границы индекса массива
                     if (neighborX >= 0 && neighborX < fieldSize &&
                         neighborY >= 0 && neighborY < fieldSize)
                     {
-                        Control cell = gameField.GetControlFromPosition(neighborX, neighborY);
-                        if (cell != null && cell.BackColor == Color.Black)
+                        if (cells[neighborY, neighborX].BackColor == Color.Black)
                         {
                             count++;
                         }
@@ -200,7 +322,20 @@ namespace GameOfLife
 
         private void end_Game()
         {
-            MessageBox.Show("Игра окончена. ");
+            // Расчитываем условия победы в зависимости от заданных условий
+            if (aliveCells > targetCells && targetType == ">" ||
+                aliveCells >= targetCells && targetType == ">=" ||
+                aliveCells < targetCells && targetType == "<" ||
+                aliveCells <= targetCells && targetType == "<=" ||
+                aliveCells == targetCells && targetType == "==" ||
+                aliveCells == targetCells && targetType == "="
+           )
+            {
+                MessageBox.Show("Вы победили!");
+
+            } else {
+                MessageBox.Show("Вы проиграли :(");
+            }
         }
 
         private void timer_Step(object sender, EventArgs e)
@@ -212,9 +347,10 @@ namespace GameOfLife
         {
             if (!isGameStarted)
             {
-                Panel cell = sender as Panel;
+                Button cell = sender as Button;
                 if (cell != null)
                 {
+                    // Красим клетки в противоположный цвет согласно количеству доступных клеток на размещение
                     if (cell.BackColor == Color.White && availableCells > 0)
                     {
                         cell.BackColor = Color.Black;
@@ -227,7 +363,7 @@ namespace GameOfLife
                         availableCells++;
                         aliveCells--;
                     }
-                    label1.Text = $"Доступно для установки: {availableCells}";
+                    lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
                 }
             }
         }
