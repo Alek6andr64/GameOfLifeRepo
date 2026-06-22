@@ -170,18 +170,18 @@
             groupBox3.Size = new Size(560, 55);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
-            groupBox3.Text = "Нужно соседей для смерти:";
-            toolTip1.SetToolTip(groupBox3, "В");
+            groupBox3.Text = "Нужно соседей для возрождения:";
+            toolTip1.SetToolTip(groupBox3, "Определяет количество соседей, необходимое для возрождения клетки");
             // 
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
-            textBox2.Enabled = false;
             textBox2.Location = new Point(3, 27);
             textBox2.Name = "textBox2";
-            textBox2.PlaceholderText = "4,5,6,7,8";
+            textBox2.PlaceholderText = "3";
             textBox2.Size = new Size(554, 31);
             textBox2.TabIndex = 0;
+            textBox2.Leave += textBox2_Leave;
             // 
             // groupBox2
             // 
@@ -193,16 +193,17 @@
             groupBox2.TabIndex = 3;
             groupBox2.TabStop = false;
             groupBox2.Text = "Нужно соседей для выживания:";
+            toolTip1.SetToolTip(groupBox2, "Определяет количество соседей, необходимое для выживания клетки");
             // 
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
-            textBox1.Enabled = false;
             textBox1.Location = new Point(3, 27);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "2,3";
             textBox1.Size = new Size(554, 31);
             textBox1.TabIndex = 0;
+            textBox1.Leave += textBox1_Leave;
             // 
             // groupBox1
             // 
@@ -220,6 +221,7 @@
             // 
             numericUpDown1.Dock = DockStyle.Fill;
             numericUpDown1.Location = new Point(3, 27);
+            numericUpDown1.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             numericUpDown1.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(554, 31);

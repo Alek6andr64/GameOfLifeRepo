@@ -114,7 +114,7 @@
             settingsButton.Name = "settingsButton";
             settingsButton.Size = new Size(253, 68);
             settingsButton.TabIndex = 3;
-            settingsButton.Text = "Настройки";
+            settingsButton.Text = "Справка";
             settingsButton.UseVisualStyleBackColor = true;
             settingsButton.Click += settingsButton_Click;
             // 

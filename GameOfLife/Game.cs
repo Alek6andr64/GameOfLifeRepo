@@ -7,24 +7,35 @@ namespace GameOfLife
 {
     public partial class Game : Form
     {
-
         private Random random = new Random();
 
         // Параметры игры
-        private int aliveCells = 0;
-        private int startAvailableCells;
-        private int availableCells;
-        private int stepCount;
-        private int fieldSize;
-        private int targetCells;
-        private string targetType;
-        private int step = 0;
-        private bool isGameStarted = false;
-        private bool isGameFinished = false;
-        private short gameType = 0;
+        private int aliveCells = 0; // Количество живых клеток на поле
+        private int startAvailableCells; // Начальное количество клеток, доступных для расстановки
+        private int availableCells; // Текущее количество клеток, доступных для расстановки
+        private int stepCount; // Максимальное количество шагов симуляции в классическом режиме 
+        private int fieldSize; // Размер игрового поля 
+        private int targetCells; // Целевое количество клеток для победы 
+        private string targetType; // Оператор сравнения для определения победы (">", ">=", "<", "<=", "==", "=")
+        private int step = 0; // Текущий номер шага симуляции
+        private bool isGameStarted = false; // Начата ли игра 
+        private bool isGameFinished = false; // Завершена ли игра 
+        private short gameType = 0; //  0 - классическим режим, 1 - бесконечный режим
+
+        // Коллекции для правил игры
+        private HashSet<int> survivalRules = new HashSet<int>();
+        private HashSet<int> birthRules = new HashSet<int>();
+        private string rawSurvive;
+        private string rawBirth;
 
         // Двумерный массив кнопок игрового поля
         private Button[,] cells;
+        private bool[,] fieldState;
+
+        // Параметры зума
+        private int viewportSize = 30;
+        private int viewX = 0;
+        private int viewY = 0;
 
         // Текст экрана загрузки
         private Label lblLoading;
@@ -32,10 +43,12 @@ namespace GameOfLife
         // Текст цели
         Label lblTargetScore;
 
-        public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType, short gameType, bool[,] field = null, int step = 0)
+        public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType, short gameType,
+                    string surviveRulesStr = "23", string birthRulesStr = "3", bool[,] field = null, int step = 0)
         {
             InitializeComponent();
 
+            // Сохраняем базовые параметры игры
             this.availableCells = availableCells;
             this.startAvailableCells = availableCells;
             this.stepCount = stepCount;
@@ -44,6 +57,16 @@ namespace GameOfLife
             this.targetType = targetType;
             this.step = step;
             this.gameType = gameType;
+            this.rawSurvive = surviveRulesStr;
+            this.rawBirth = birthRulesStr;
+
+            // Преобразуем строки правил в наборы чисел 
+            foreach (char c in surviveRulesStr) survivalRules.Add(c - '0');
+            foreach (char c in birthRulesStr) birthRules.Add(c - '0');
+
+            // Настраиваем сколько клеток помещается на экране 
+            viewportSize = Math.Min(fieldSize, 70);
+            fieldState = new bool[fieldSize, fieldSize];
 
             // Настройка элементов игры
             pbGameProgress.Maximum = stepCount;
@@ -55,67 +78,106 @@ namespace GameOfLife
             // Создаем кнопки
             InitializeLoadingLabel();
             InitializeGameGrid();
-            
+
+            // Убираем в бесконечном режиме прогресс-бар 
             if (gameType == 1)
             {
                 pbGameProgress.Visible = false;
             }
 
+            // Если загружено готовое поле  - восстанавливаем 
             if (field != null)
             {
                 for (int row = 0; row < fieldSize; row++)
                 {
                     for (int col = 0; col < fieldSize; col++)
                     {
-                        cells[row, col].BackColor = field[row, col] ? Color.Black : Color.White;
+                        fieldState[row, col] = field[row, col];
                     }
                 }
+                UpdateViewport();
                 start_Game();
             }
         }
 
         private void InitializeGameGrid()
         {
-            cells = new Button[fieldSize, fieldSize];
-
             // Вычисляем иразмер кнопки по минимальной стороне панели
             int minDimension = Math.Min(gameField.Width, gameField.Height);
-            int buttonSize = minDimension / fieldSize;
+            int buttonSize = minDimension / viewportSize;
 
             // Защита от деления на ноль
             if (buttonSize == 0) buttonSize = 1;
 
             // Вычисляем отступы для центрирования сетки
-            int offsetX = (gameField.Width - (buttonSize * fieldSize)) / 2;
-            int offsetY = (gameField.Height - (buttonSize * fieldSize)) / 2;
+            int offsetX = (gameField.Width - (buttonSize * viewportSize)) / 2;
+            int offsetY = (gameField.Height - (buttonSize * viewportSize)) / 2;
 
-            // Замораживаем интерфейс 
+            Button[,] newCells = new Button[viewportSize, viewportSize];
+            List<Button> oldButtons = gameField.Controls.OfType<Button>().ToList();
+
+            // Замораживаем интерфейс
             gameField.SuspendLayout();
 
-            for (int row = 0; row < fieldSize; row++)
+            for (int row = 0; row < viewportSize; row++)
             {
-                for (int col = 0; col < fieldSize; col++)
+                for (int col = 0; col < viewportSize; col++)
                 {
                     Button cell = new Button();
                     cell.Size = new Size(buttonSize, buttonSize);
-
-                    // Устанавливаем координаты кнопок
                     cell.Location = new Point(offsetX + col * buttonSize, offsetY + row * buttonSize);
                     cell.FlatStyle = FlatStyle.Flat;
-
-                    // Задаем цвета кнопок
                     cell.BackColor = Color.White;
 
-                    // Подписка на клик по клетке
+                    // Хранит позицию клетки в видимой области
+                    cell.Tag = new Point(col, row);
                     cell.Click += cell_Click;
 
-                    cells[row, col] = cell;
-                    gameField.Controls.Add(cell);
+                    newCells[row, col] = cell;
                 }
             }
 
-            // Разамораживаем интерфейс 
+            // Освобождаем ресурсы старых кнопок перед добавлением новых
+            foreach (var btn in oldButtons)
+            {
+                gameField.Controls.Remove(btn);
+                btn.Dispose();
+            }
+
+            cells = newCells;
+
+            // Добавляем все новые кнопки на форму
+            for (int row = 0; row < viewportSize; row++)
+            {
+                for (int col = 0; col < viewportSize; col++)
+                {
+                    gameField.Controls.Add(cells[row, col]);
+                }
+            }
+
+            // Возвращаем перерисовку и обновляем отображение
             gameField.ResumeLayout(true);
+            UpdateViewport();
+        }
+
+        private void UpdateViewport()
+        {
+            // viewX, viewY - положение камеры
+            // viewportSize - сколько клеток видно
+            // Для каждой клетки на экране (row, col) находим соответствующую клетку и отображаем её состояние
+            for (int row = 0; row < viewportSize; row++)
+            {
+                for (int col = 0; col < viewportSize; col++)
+                {
+                    int fieldR = viewY + row;
+                    int fieldC = viewX + col;
+
+                    if (fieldR >= 0 && fieldR < fieldSize && fieldC >= 0 && fieldC < fieldSize)
+                    {
+                        cells[row, col].BackColor = fieldState[fieldR, fieldC] ? Color.Black : Color.White;
+                    }
+                }
+            }
         }
 
         private void InitializeLoadingLabel()
@@ -135,9 +197,6 @@ namespace GameOfLife
         {
             if (show)
             {
-                // Скрываем поле с кнопками 
-                gameField.Visible = false;
-
                 // Центрируем надпись
                 lblLoading.Location = new Point(
                     (this.ClientSize.Width - lblLoading.Width) / 2,
@@ -148,14 +207,13 @@ namespace GameOfLife
                 lblLoading.Visible = true;
                 lblLoading.BringToFront();
 
-                // Принудительно заставляем бновить интерфейс 
+                // Принудительно заставляем обновить интерфейс 
                 Application.DoEvents();
             }
             else
             {
-                // Скрываем метку и возвращаем видимость игрового поля
+                // Скрываем метку
                 lblLoading.Visible = false;
-                gameField.Visible = true;
             }
         }
 
@@ -163,31 +221,29 @@ namespace GameOfLife
         {
             if (cells == null) return;
 
-            // Включаем режим загрузки
             ShowLoading(true);
 
             // Пересчитываем размеры под новые габариты окна
             int minDimension = Math.Min(gameField.Width, gameField.Height);
-            int buttonSize = minDimension / fieldSize;
+            int buttonSize = minDimension / viewportSize;
             if (buttonSize == 0) buttonSize = 1;
 
             // Вычисляем отступы для центрирования сетки
-            int offsetX = (gameField.Width - (buttonSize * fieldSize)) / 2;
-            int offsetY = (gameField.Height - (buttonSize * fieldSize)) / 2;
+            int offsetX = (gameField.Width - (buttonSize * viewportSize)) / 2;
+            int offsetY = (gameField.Height - (buttonSize * viewportSize)) / 2;
 
             // Отключаем обновления кнопок
             gameField.SuspendLayout();
 
-            for (int row = 0; row < fieldSize; row++)
+            for (int row = 0; row < viewportSize; row++)
             {
-                for (int col = 0; col < fieldSize; col++)
+                for (int col = 0; col < viewportSize; col++)
                 {
                     cells[row, col].Size = new Size(buttonSize, buttonSize);
                     cells[row, col].Location = new Point(offsetX + col * buttonSize, offsetY + row * buttonSize);
                 }
             }
 
-            // Выключаем режим загрузки
             gameField.ResumeLayout(true);
             ShowLoading(false);
         }
@@ -206,6 +262,7 @@ namespace GameOfLife
             btnNextStep.Enabled = true;
             btnStartAuto.Enabled = true;
 
+            // Меняем назначение кнопок в режиме игры
             btnClearAndLeave.Text = $"Выйти";
             btnSaveAndRand.Text = $"Сохранить";
 
@@ -245,9 +302,9 @@ namespace GameOfLife
 
         private void game_Step()
         {
+            // Классический режим
             if (gameType == 0)
             {
-                // Логика одного шага
                 if (step < stepCount)
                 {
                     step++;
@@ -260,36 +317,37 @@ namespace GameOfLife
                     gameTimer.Stop();
                     end_Game();
                 }
-            } else
+            }
+            else
             {
+                // Бесконечный режим 
                 step++;
                 slMoveCount.Text = $"Ход: {step}";
                 simulate();
             }
         }
 
+
         private void simulate()
         {
+            // Создаем копию поля, чтобы не влиять на текущее во время расчетов
             bool[,] nextState = new bool[fieldSize, fieldSize];
             aliveCells = 0;
 
-            // Замораживаем интерфейс 
-            gameField.SuspendLayout();
-
-            // Создание поля для следующего шага
             for (int row = 0; row < fieldSize; row++)
             {
                 for (int col = 0; col < fieldSize; col++)
                 {
                     int neighbors = countNeighbors(col, row);
-                    bool isAlive = (cells[row, col].BackColor == Color.Black);
+                    bool isAlive = fieldState[row, col];
 
-                    if (!isAlive && neighbors == 3)
+                    // Перекрашиванием кнопки согласно правилам
+                    if (isAlive && survivalRules.Contains(neighbors))
                     {
                         nextState[row, col] = true;
                         aliveCells++;
                     }
-                    else if (isAlive && (neighbors == 2 || neighbors == 3))
+                    else if (!isAlive && birthRules.Contains(neighbors))
                     {
                         nextState[row, col] = true;
                         aliveCells++;
@@ -301,20 +359,13 @@ namespace GameOfLife
                 }
             }
 
-            // Перекрашивание кнопок согласно правилам
-            for (int row = 0; row < fieldSize; row++)
-            {
-                for (int col = 0; col < fieldSize; col++)
-                {
-                    cells[row, col].BackColor = nextState[row, col] ? Color.Black : Color.White;
-                }
-            }
-
-            // Размораживаем интерфейс
-            gameField.ResumeLayout(true);
+            // Заменяем текущее состояние новым
+            fieldState = nextState;
+            UpdateViewport();
 
             lblCellsStatus.Text = $"Текущее число клеток: {aliveCells}";
 
+            // Заканчиваем игру если все клетки мертвы в классическом режиме
             if (aliveCells == 0 && gameType == 0)
             {
                 end_Game();
@@ -323,24 +374,24 @@ namespace GameOfLife
 
         private int countNeighbors(int x, int y)
         {
-            // Подсчитываем соседние живые клетки
             int count = 0;
 
+            // Проверяем все 8 соседних клеток на жизнь 
             for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
                 {
+                    // Пропускаем саму клетку
                     if (i == 0 && j == 0)
                         continue;
 
                     int neighborX = x + j;
                     int neighborY = y + i;
 
-                    // Проверка на выход за границы индекса массива
-                    if (neighborX >= 0 && neighborX < fieldSize &&
-                        neighborY >= 0 && neighborY < fieldSize)
+                    // Защита от выхода за границы массива
+                    if (neighborX >= 0 && neighborX < fieldSize && neighborY >= 0 && neighborY < fieldSize)
                     {
-                        if (cells[neighborY, neighborX].BackColor == Color.Black)
+                        if (fieldState[neighborY, neighborX])
                         {
                             count++;
                         }
@@ -356,20 +407,20 @@ namespace GameOfLife
             // Останавливаем таймер, если он запущен
             if (gameTimer.Enabled)
                 gameTimer.Stop();
+
             btnPause.Enabled = false;
             btnNextStep.Enabled = false;
             btnStartAuto.Enabled = false;
+
             // Расчитываем условия победы в зависимости от заданных условий
             if (aliveCells > targetCells && targetType == ">" ||
                 aliveCells >= targetCells && targetType == ">=" ||
                 aliveCells < targetCells && targetType == "<" ||
                 aliveCells <= targetCells && targetType == "<=" ||
                 aliveCells == targetCells && targetType == "==" ||
-                aliveCells == targetCells && targetType == "="
-           )
+                aliveCells == targetCells && targetType == "=")
             {
                 MessageBox.Show("Вы победили!");
-
             }
             else
             {
@@ -388,35 +439,50 @@ namespace GameOfLife
         private void cell_Click(object sender, EventArgs e)
         {
             Button cell = sender as Button;
+            if (cell == null) return;
+
+            // Координаты в видимой области
+            Point pt = (Point)cell.Tag;
+
+            // Преобразуем координаты видимой области в глобальные координаты поля
+            int fieldC = viewX + pt.X;
+            int fieldR = viewY + pt.Y;
+
+            if (fieldR < 0 || fieldR >= fieldSize || fieldC < 0 || fieldC >= fieldSize) return;
+
+            // Расстановка начальных клеток вручную
             if (!isGameStarted && gameType == 0)
             {
-                if (cell != null)
+                if (!fieldState[fieldR, fieldC] && availableCells > 0)
                 {
-                    // Красим клетки в противоположный цвет согласно количеству доступных клеток на размещение
-                    if (cell.BackColor == Color.White && availableCells > 0)
-                    {
-                        cell.BackColor = Color.Black;
-                        availableCells--;
-                        aliveCells++;
-                    }
-                    else if (cell.BackColor == Color.Black)
-                    {
-                        cell.BackColor = Color.White;
-                        availableCells++;
-                        aliveCells--;
-                    }
-                    lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
+                    // Устанавливаем живую клетку, если есть свободные ячейки
+                    fieldState[fieldR, fieldC] = true;
+                    cell.BackColor = Color.Black;
+                    availableCells--;
+                    aliveCells++;
                 }
+                else if (fieldState[fieldR, fieldC])
+                {
+                    // Удаляем клетку, возвращая ячейку в пул доступных
+                    fieldState[fieldR, fieldC] = false;
+                    cell.BackColor = Color.White;
+                    availableCells++;
+                    aliveCells--;
+                }
+                lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
             }
             else if (gameType == 1)
             {
-                if (cell.BackColor == Color.White)
+                // В бесконечном режиме клетки можно добавлять/удалять в любой момент
+                if (!fieldState[fieldR, fieldC])
                 {
+                    fieldState[fieldR, fieldC] = true;
                     cell.BackColor = Color.Black;
                     aliveCells++;
                 }
-                else if (cell.BackColor == Color.Black)
+                else if (fieldState[fieldR, fieldC])
                 {
+                    fieldState[fieldR, fieldC] = false;
                     cell.BackColor = Color.White;
                     aliveCells--;
                 }
@@ -425,38 +491,35 @@ namespace GameOfLife
 
         private void random_Place()
         {
+            // Используем начальное количество клеток
             availableCells = startAvailableCells;
 
-            int totalCells = fieldSize * fieldSize;
-            List<bool> cellStates = new List<bool>(totalCells);
-
-            for (int i = 0; i < totalCells; i++)
-            {
-                cellStates.Add(i < availableCells);
-            }
-
-            for (int i = totalCells - 1; i > 0; i--)
-            {
-                int j = random.Next(i + 1);
-                bool temp = cellStates[i];
-                cellStates[i] = cellStates[j];
-                cellStates[j] = temp;
-            }
-
-            int index = 0;
+            // Очищаем поле
             for (int row = 0; row < fieldSize; row++)
             {
                 for (int col = 0; col < fieldSize; col++)
                 {
-
-                    bool isAlive = cellStates[index];
-
-                    cells[row, col].BackColor = isAlive ? Color.Black : Color.White;
-                    index++;
+                    fieldState[row, col] = false;
                 }
             }
 
-            availableCells = 0;
+            aliveCells = 0;
+
+            // Расставляем случайные клетки, пока не израсходуем все доступные
+            while (availableCells > 0)
+            {
+                int r = random.Next(fieldSize);
+                int c = random.Next(fieldSize);
+
+                if (!fieldState[r, c])
+                {
+                    fieldState[r, c] = true;
+                    availableCells--;
+                    aliveCells++;
+                }
+            }
+
+            UpdateViewport();
             lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
         }
 
@@ -470,7 +533,6 @@ namespace GameOfLife
             {
                 if (!isGameFinished)
                 {
-                    // Останавливаем таймер, если он запущен
                     if (gameTimer.Enabled)
                         gameTimer.Stop();
 
@@ -479,30 +541,34 @@ namespace GameOfLife
 
                     if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        string[]? lines = new string[]
+                        // Сохраняем все параметры игры в текстовый файл
+                        string[] lines = new string[]
                         {
-                        aliveCells.ToString(),
-                        availableCells.ToString(),
-                        stepCount.ToString(),
-                        fieldSize.ToString(),
-                        targetCells.ToString(),
-                        targetType.ToString(),
-                        step.ToString(),
-                        gameType.ToString()
+                            aliveCells.ToString(),
+                            availableCells.ToString(),
+                            stepCount.ToString(),
+                            fieldSize.ToString(),
+                            targetCells.ToString(),
+                            targetType.ToString(),
+                            step.ToString(),
+                            gameType.ToString(),
+                            rawSurvive,
+                            rawBirth
                         };
 
-                        string? field = "";
+                        string field = "";
 
                         for (int row = 0; row < fieldSize; row++)
                         {
                             for (int col = 0; col < fieldSize; col++)
                             {
-                                if (cells[row, col].BackColor == Color.White)
+                                if (!fieldState[row, col])
                                     field += "0";
                                 else
                                     field += "1";
                             }
                         }
+
                         lines = lines.Append(field).ToArray();
                         File.WriteAllLines(saveFileDialog.FileName, lines);
                         MessageBox.Show("Сохранено!");
@@ -510,16 +576,18 @@ namespace GameOfLife
                 }
                 else
                 {
+                    // Сохраняем позицию и размер текущего окна
                     Point previousLocation = this.Location;
                     Size previousSize = this.Size;
                     FormWindowState previousState = this.WindowState;
 
                     this.Close();
 
-                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType, gameType);
-
+                    // Создаем новую игру с теми же параметрами
+                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType, gameType, rawSurvive, rawBirth);
                     game.StartPosition = FormStartPosition.Manual;
 
+                    // Восстанавливаем позицию и размер, если окно не было развернуто
                     if (previousState == FormWindowState.Maximized)
                     {
                         game.WindowState = FormWindowState.Maximized;
@@ -539,24 +607,94 @@ namespace GameOfLife
         {
             if (!isGameStarted)
             {
+                // Очистка поля до начала игры
                 for (int row = 0; row < fieldSize; row++)
                 {
                     for (int col = 0; col < fieldSize; col++)
                     {
-                        cells[row, col].BackColor = Color.White;
+                        fieldState[row, col] = false;
                     }
                 }
                 availableCells = startAvailableCells;
+                UpdateViewport();
             }
             else
             {
+                // Выход из игры
                 this.Close();
             }
         }
 
         private void numGameSpeed_ValueChanged(object sender, EventArgs e)
         {
-            gameTimer.Interval = (int) numGameSpeed.Value;
+            // Скорость симуляции в миллисекундах между шагами
+            gameTimer.Interval = (int)numGameSpeed.Value;
+        }
+
+        private void btnZoomOut_Click(object sender, EventArgs e)
+        {
+            // Уменьшение масштаба
+            int maxZoom = Math.Min(fieldSize, 70);
+            if (viewportSize < maxZoom)
+            {
+                viewportSize++;
+                InitializeGameGrid();
+            }
+        }
+
+        private void btnZoomIn_Click(object sender, EventArgs e)
+        {
+            // Увеличение масштаба
+            if (viewportSize > 5)
+            {
+                viewportSize--;
+
+                // Корректируем позицию камеры, чтобы она не выходила за границы поля
+                if (viewX + viewportSize > fieldSize) viewX = fieldSize - viewportSize;
+                if (viewY + viewportSize > fieldSize) viewY = fieldSize - viewportSize;
+
+                InitializeGameGrid();
+            }
+        }
+
+        private void btnUp_Click(object sender, EventArgs e)
+        {
+            // Смещаем видимую область вверх
+            if (viewY > 0)
+            {
+                viewY--;
+                UpdateViewport();
+            }
+        }
+
+        private void btnDown_Click(object sender, EventArgs e)
+        {
+            // Смещаем вниз, пока не упремся в нижнюю границу
+            if (viewY + viewportSize < fieldSize)
+            {
+                viewY++;
+                UpdateViewport();
+            }
+        }
+
+        private void btnLeft_Click(object sender, EventArgs e)
+        {
+            // Смещаем влево, пока не упремся в левую границу
+            if (viewX > 0)
+            {
+                viewX--;
+                UpdateViewport();
+            }
+        }
+
+        private void btnRight_Click(object sender, EventArgs e)
+        {
+            // Смещаем вправо, пока не упремся в правую границу
+            if (viewX + viewportSize < fieldSize)
+            {
+                viewX++;
+                UpdateViewport();
+            }
         }
     }
 }
