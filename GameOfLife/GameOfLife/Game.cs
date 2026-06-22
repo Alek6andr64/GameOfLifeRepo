@@ -199,6 +199,8 @@ namespace GameOfLife
             lblTargetScore.TextAlign = ContentAlignment.MiddleCenter;
             tlpTopMenu.Controls.Add(lblTargetScore, 3, 0);
             lblTargetScore.Text = $"Цель: 0";
+
+            lblTargetScore.Text = $"{targetType} {targetCells.ToString()}";
         }
 
         private void btnPause_Click(object sender, EventArgs e)
@@ -336,6 +338,12 @@ namespace GameOfLife
             } else {
                 MessageBox.Show("Вы проиграли :(");
             }
+            // Останавливаем таймер, если он запущен
+            if (gameTimer.Enabled)
+                gameTimer.Stop();
+            btnPause.Enabled = false;
+            btnNextStep.Enabled = false;
+            btnStartAuto.Enabled = false;
         }
 
         private void timer_Step(object sender, EventArgs e)

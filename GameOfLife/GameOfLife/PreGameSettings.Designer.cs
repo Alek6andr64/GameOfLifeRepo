@@ -123,7 +123,7 @@
             groupBox5.TabIndex = 6;
             groupBox5.TabStop = false;
             groupBox5.Text = "Количество ходов:";
-            toolTip1.SetToolTip(groupBox5, "ААА");
+            toolTip1.SetToolTip(groupBox5, "Определяет количество шагов которое пройдет в симуляции до конца игры");
             // 
             // numericUpDown5
             // 
@@ -147,6 +147,7 @@
             groupBox4.TabIndex = 5;
             groupBox4.TabStop = false;
             groupBox4.Text = "Клеток на размещение:";
+            toolTip1.SetToolTip(groupBox4, "Количество клеток доступных для размещения перед началом игры");
             // 
             // numericUpDown4
             // 
@@ -210,6 +211,7 @@
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Размер поля ";
+            toolTip1.SetToolTip(groupBox1, "Влияет на длину и ширину игрового поля");
             // 
             // numericUpDown1
             // 
@@ -232,7 +234,7 @@
             groupBox6.TabIndex = 7;
             groupBox6.TabStop = false;
             groupBox6.Text = "Режим Игры";
-            toolTip1.SetToolTip(groupBox6, "АААА");
+            toolTip1.SetToolTip(groupBox6, "Определяет условия и цели игры");
             // 
             // comboBox1
             // 
@@ -266,6 +268,7 @@
             groupBox7.TabIndex = 8;
             groupBox7.TabStop = false;
             groupBox7.Text = "Условие победы:";
+            toolTip1.SetToolTip(groupBox7, "Определяет условия победы, формат записи: *символ**число* (Доступные символы: >, <, <=, >=, ==)");
             // 
             // textBox3
             // 
