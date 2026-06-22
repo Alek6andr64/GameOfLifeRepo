@@ -116,6 +116,7 @@
             settingsButton.TabIndex = 3;
             settingsButton.Text = "Настройки";
             settingsButton.UseVisualStyleBackColor = true;
+            settingsButton.Click += settingsButton_Click;
             // 
             // exitButton
             // 
@@ -127,6 +128,7 @@
             exitButton.TabIndex = 4;
             exitButton.Text = "Выход";
             exitButton.UseVisualStyleBackColor = true;
+            exitButton.Click += exitButton_Click;
             // 
             // MainMenu
             // 

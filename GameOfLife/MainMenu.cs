@@ -27,7 +27,7 @@ namespace GameOfLife
                     int aliveCells = int.Parse(lines[0]);
                     int availableCells = int.Parse(lines[1]);
                     int stepCount = int.Parse(lines[2]);
-                    int fieldSize = int.Parse(lines[3]); 
+                    int fieldSize = int.Parse(lines[3]);
                     int targetCells = int.Parse(lines[4]);
                     string targetType = lines[5];
                     int step = int.Parse(lines[6]);
@@ -35,7 +35,7 @@ namespace GameOfLife
                     string field = lines[7];
                     int charIndex = 0;
 
-                    bool[,] gameField = new bool[fieldSize, fieldSize]; 
+                    bool[,] gameField = new bool[fieldSize, fieldSize];
 
                     for (int row = 0; row < fieldSize; row++)
                     {
@@ -60,6 +60,16 @@ namespace GameOfLife
                     MessageBox.Show("Файл поврежден или имеет неверный формат.");
                 }
             }
+        }
+
+        private void exitButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Функция в разработке");
         }
     }
 }

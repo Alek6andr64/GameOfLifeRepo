@@ -12,6 +12,7 @@ namespace GameOfLife
 
         // Параметры игры
         private int aliveCells = 0;
+        private int startAvailableCells;
         private int availableCells;
         private int stepCount;
         private int fieldSize;
@@ -35,6 +36,7 @@ namespace GameOfLife
             InitializeComponent();
 
             this.availableCells = availableCells;
+            this.startAvailableCells = availableCells;
             this.stepCount = stepCount;
             this.fieldSize = fieldSize;
             this.targetCells = targetCells;
@@ -394,17 +396,48 @@ namespace GameOfLife
             }
         }
 
+        private void random_Place()
+        {
+            availableCells = startAvailableCells;
+
+            int totalCells = fieldSize * fieldSize;
+            List<bool> cellStates = new List<bool>(totalCells);
+
+            for (int i = 0; i < totalCells; i++)
+            {
+                cellStates.Add(i < availableCells);
+            }
+
+            for (int i = totalCells - 1; i > 0; i--)
+            {
+                int j = random.Next(i + 1);
+                bool temp = cellStates[i];
+                cellStates[i] = cellStates[j];
+                cellStates[j] = temp;
+            }
+
+            int index = 0;
+            for (int row = 0; row < fieldSize; row++)
+            {
+                for (int col = 0; col < fieldSize; col++)
+                {
+
+                    bool isAlive = cellStates[index];
+
+                    cells[row, col].BackColor = isAlive ? Color.Black : Color.White;
+                    index++;
+                }
+            }
+
+            availableCells = 0;
+            lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
+        }
+
         private void btnSaveAndRand_Click(object sender, EventArgs e)
         {
             if (!isGameStarted)
             {
-                for (int row = 0; row < fieldSize; row++)
-                {
-                    for (int col = 0; col < fieldSize; col++)
-                    {
-                        cells[row, col].BackColor = random.Next(0, 2) == 1 ? Color.Black : Color.White;
-                    }
-                }
+                random_Place();
             }
             else
             {
@@ -449,7 +482,7 @@ namespace GameOfLife
                 } else
                 {
                     this.Close();
-                    Game game = new Game(fieldSize, 0, stepCount, targetCells, targetType);
+                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType);
                     game.Show();
                 }
             }
