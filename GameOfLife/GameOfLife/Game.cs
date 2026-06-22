@@ -324,6 +324,12 @@ namespace GameOfLife
 
         private void end_Game()
         {
+            // Останавливаем таймер, если он запущен
+            if (gameTimer.Enabled)
+                gameTimer.Stop();
+            btnPause.Enabled = false;
+            btnNextStep.Enabled = false;
+            btnStartAuto.Enabled = false;
             // Расчитываем условия победы в зависимости от заданных условий
             if (aliveCells > targetCells && targetType == ">" ||
                 aliveCells >= targetCells && targetType == ">=" ||
@@ -338,12 +344,6 @@ namespace GameOfLife
             } else {
                 MessageBox.Show("Вы проиграли :(");
             }
-            // Останавливаем таймер, если он запущен
-            if (gameTimer.Enabled)
-                gameTimer.Stop();
-            btnPause.Enabled = false;
-            btnNextStep.Enabled = false;
-            btnStartAuto.Enabled = false;
         }
 
         private void timer_Step(object sender, EventArgs e)

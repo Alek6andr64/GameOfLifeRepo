@@ -47,11 +47,12 @@
             // tlpTopMenu
             // 
             tlpTopMenu.CellBorderStyle = TableLayoutPanelCellBorderStyle.Outset;
-            tlpTopMenu.ColumnCount = 4;
-            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tlpTopMenu.ColumnCount = 5;
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTopMenu.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tlpTopMenu.Controls.Add(grpMovesInfo, 0, 0);
             tlpTopMenu.Controls.Add(tlpControlButtons, 1, 0);
             tlpTopMenu.Controls.Add(lblCellsStatus, 2, 0);
@@ -73,7 +74,7 @@
             grpMovesInfo.Margin = new Padding(4, 5, 4, 5);
             grpMovesInfo.Name = "grpMovesInfo";
             grpMovesInfo.Padding = new Padding(4, 5, 4, 5);
-            grpMovesInfo.Size = new Size(246, 69);
+            grpMovesInfo.Size = new Size(195, 69);
             grpMovesInfo.TabIndex = 1;
             grpMovesInfo.TabStop = false;
             grpMovesInfo.Text = "Осталось ходов:";
@@ -85,7 +86,7 @@
             pbGameProgress.ForeColor = SystemColors.ActiveCaption;
             pbGameProgress.Location = new Point(4, 29);
             pbGameProgress.Name = "pbGameProgress";
-            pbGameProgress.Size = new Size(238, 35);
+            pbGameProgress.Size = new Size(187, 35);
             pbGameProgress.Style = ProgressBarStyle.Continuous;
             pbGameProgress.TabIndex = 0;
             // 
@@ -99,11 +100,11 @@
             tlpControlButtons.Controls.Add(btnNextStep, 1, 0);
             tlpControlButtons.Controls.Add(btnStartAuto, 2, 0);
             tlpControlButtons.Dock = DockStyle.Fill;
-            tlpControlButtons.Location = new Point(261, 5);
+            tlpControlButtons.Location = new Point(210, 5);
             tlpControlButtons.Name = "tlpControlButtons";
             tlpControlButtons.RowCount = 1;
             tlpControlButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpControlButtons.Size = new Size(248, 73);
+            tlpControlButtons.Size = new Size(197, 73);
             tlpControlButtons.TabIndex = 2;
             // 
             // btnPause
@@ -115,7 +116,7 @@
             btnPause.Image = Properties.Resources.pause_24dp_000000_FILL0_wght400_GRAD0_opsz24;
             btnPause.Location = new Point(3, 3);
             btnPause.Name = "btnPause";
-            btnPause.Size = new Size(76, 67);
+            btnPause.Size = new Size(59, 67);
             btnPause.TabIndex = 0;
             btnPause.UseVisualStyleBackColor = true;
             btnPause.Click += btnPause_Click;
@@ -126,9 +127,9 @@
             btnNextStep.Dock = DockStyle.Fill;
             btnNextStep.Enabled = false;
             btnNextStep.Image = Properties.Resources.keyboard_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            btnNextStep.Location = new Point(85, 3);
+            btnNextStep.Location = new Point(68, 3);
             btnNextStep.Name = "btnNextStep";
-            btnNextStep.Size = new Size(76, 67);
+            btnNextStep.Size = new Size(59, 67);
             btnNextStep.TabIndex = 1;
             btnNextStep.UseVisualStyleBackColor = true;
             btnNextStep.Click += btnNextStep_Click;
@@ -139,9 +140,9 @@
             btnStartAuto.Dock = DockStyle.Fill;
             btnStartAuto.Enabled = false;
             btnStartAuto.Image = Properties.Resources.keyboard_double_arrow_right_24dp_000000_FILL0_wght400_GRAD0_opsz24;
-            btnStartAuto.Location = new Point(167, 3);
+            btnStartAuto.Location = new Point(133, 3);
             btnStartAuto.Name = "btnStartAuto";
-            btnStartAuto.Size = new Size(78, 67);
+            btnStartAuto.Size = new Size(61, 67);
             btnStartAuto.TabIndex = 2;
             btnStartAuto.UseVisualStyleBackColor = true;
             btnStartAuto.Click += btnStartAuto_Click;
@@ -150,10 +151,10 @@
             // 
             lblCellsStatus.AutoSize = true;
             lblCellsStatus.Dock = DockStyle.Fill;
-            lblCellsStatus.Location = new Point(518, 2);
+            lblCellsStatus.Location = new Point(416, 2);
             lblCellsStatus.Margin = new Padding(4, 0, 4, 0);
             lblCellsStatus.Name = "lblCellsStatus";
-            lblCellsStatus.Size = new Size(246, 79);
+            lblCellsStatus.Size = new Size(195, 79);
             lblCellsStatus.TabIndex = 0;
             lblCellsStatus.Text = "Осталось клеток: 0";
             lblCellsStatus.TextAlign = ContentAlignment.MiddleCenter;
@@ -161,9 +162,9 @@
             // btnStartGame
             // 
             btnStartGame.Dock = DockStyle.Fill;
-            btnStartGame.Location = new Point(773, 5);
+            btnStartGame.Location = new Point(620, 5);
             btnStartGame.Name = "btnStartGame";
-            btnStartGame.Size = new Size(251, 73);
+            btnStartGame.Size = new Size(197, 73);
             btnStartGame.TabIndex = 3;
             btnStartGame.Text = "Начать";
             btnStartGame.UseVisualStyleBackColor = true;
