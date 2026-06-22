@@ -45,7 +45,7 @@ namespace GameOfLife
 
             // Настройка элементов игры
             pbGameProgress.Maximum = stepCount;
-            grpMovesInfo.Text = $"Осталось ходов: {stepCount - step}  (из {stepCount})";
+            slMoveCount.Text = $"Осталось ходов: {stepCount - step}  (из {stepCount})";
             lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
 
             // Подписка на событие авто симуляции
@@ -206,7 +206,7 @@ namespace GameOfLife
             // Скрываем кнопку старта
             btnStartGame.Hide();
 
-            lblCellsStatus.Text = $"Текущее число клеток: {aliveCells}";
+            lblCellsStatus.Text = $"Текущее число клеток: {startAvailableCells - availableCells}";
 
             // Текст цели раунда
             lblTargetScore = new Label();
@@ -244,7 +244,7 @@ namespace GameOfLife
             {
                 step++;
                 pbGameProgress.Value = step;
-                grpMovesInfo.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
+                slMoveCount.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
                 simulate();
             }
             else
@@ -392,7 +392,7 @@ namespace GameOfLife
                         aliveCells--;
                     }
                     lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
-                } 
+                }
             }
         }
 
@@ -479,10 +479,29 @@ namespace GameOfLife
                         File.WriteAllLines(saveFileDialog.FileName, lines);
                         MessageBox.Show("Сохранено!");
                     }
-                } else
+                }
+                else
                 {
+                    Point previousLocation = this.Location;
+                    Size previousSize = this.Size;
+                    FormWindowState previousState = this.WindowState;
+
                     this.Close();
+
                     Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType);
+
+                    game.StartPosition = FormStartPosition.Manual;
+
+                    if (previousState == FormWindowState.Maximized)
+                    {
+                        game.WindowState = FormWindowState.Maximized;
+                    }
+                    else
+                    {
+                        game.Location = previousLocation;
+                        game.Size = previousSize;
+                    }
+
                     game.Show();
                 }
             }
@@ -499,10 +518,17 @@ namespace GameOfLife
                         cells[row, col].BackColor = Color.White;
                     }
                 }
-            } else
+                availableCells = startAvailableCells;
+            }
+            else
             {
                 this.Close();
             }
+        }
+
+        private void numGameSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            gameTimer.Interval = (int) numGameSpeed.Value;
         }
     }
 }

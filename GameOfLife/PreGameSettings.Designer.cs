@@ -153,6 +153,7 @@
             // 
             numericUpDown4.Dock = DockStyle.Fill;
             numericUpDown4.Location = new Point(3, 27);
+            numericUpDown4.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
             numericUpDown4.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
             numericUpDown4.Name = "numericUpDown4";
             numericUpDown4.Size = new Size(554, 31);
@@ -175,6 +176,7 @@
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
+            textBox2.Enabled = false;
             textBox2.Location = new Point(3, 27);
             textBox2.Name = "textBox2";
             textBox2.PlaceholderText = "4,5,6,7,8";
@@ -195,6 +197,7 @@
             // textBox1
             // 
             textBox1.Dock = DockStyle.Fill;
+            textBox1.Enabled = false;
             textBox1.Location = new Point(3, 27);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "2,3";
@@ -240,7 +243,7 @@
             // 
             comboBox1.Dock = DockStyle.Fill;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Классика", "Ботаника", "Бесконечный" });
+            comboBox1.Items.AddRange(new object[] { "Классика", "Бесконечный" });
             comboBox1.Location = new Point(3, 27);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(554, 31);
