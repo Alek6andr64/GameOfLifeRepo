@@ -117,7 +117,63 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>131, 17</value>
+  </metadata>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>354, 17</value>
+  </metadata>
+  <metadata name="gameTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <metadata name="notifyIcon1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>240, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="btnUp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        wQAADsEBuJFr7QAAAKFJREFUSEu1zcEKwjAQRdGKUHAjCPr/v+dKFIXqKn0pMxKG6+4ZOKW9k6RTa+2v
+        MDphdMLohNEJoxNGJ4xOGJ0w/qL1CHuaE4xEqz/SS2baV2GshouX8n6g/SOMo+FCfX7bJ1r/yTE7wZji
+        kg3MnjF7y7nOE8YuDm/qLGndYs9dTriHYuqHa6u0rnKRHc4pOmF0wuiE0QmjE0YnjE4Yfdq0AigTYb9X
+        lRZ+AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="btnDown.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        wQAADsEBuJFr7QAAAKRJREFUSEu1zUEKAjAMRNGIILgRBL3/9VyJoqCu6qS0Usrvbgw8lJ8ao5TyVxid
+        MDphdMLohNEJoxNGJ44RGznLhfYjjT54lzhGHOWWP5YrvUltX827DmPSnOTdDjxgXw+neTfC2GkO8mqH
+        PkOvh1NvKxhHmr30P0m/7/NbgnGm2cmzH07zmxWMRLOVe6L9CkYnjE4YnTA6YXTC6ITRCaMTRp8SX9kD
+        Yb/d5A/JAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="btnLeft.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        wQAADsEBuJFr7QAAADtJREFUSEtjGAWjYEDBdyDmgDCpD0CG/4diqoNRw7ECmhoOAjALQDTNwKglJAG6
+        WUKzomIUjAIYYGAAAIVyH2l9k7USAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="btnZoomIn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAACnSURBVEhL3ZXBCoAwDEN39FM8+v8/5lEXNRBGwwZ2ID4IbjRNxw6u/I7l+b7BZqBwVO3X7gZ7
+        yNHWubdDEA4Dh7QBLVrnWg8YokM0IIJ1qhtONBxyqGcoXBtUjsgLWSIz5Ii80DfZqnhCrNPRK4DSmT5g
+        rWL4lCtKQa9A5Yi8kCUyQ47IC3UZbVDP8H9IG7h2tN7uEG0A3Du03h2S8eBwiCXjyfwVpZwVB4PV9m/L
+        5QAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="btnZoomOut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAACnSURBVEhL7ZO7DoMwEARd5lNS5v9/jDLxFiOtrFvHJKZjpBUG5u54tpuzvEMSlatEKllJVK4S
+        cenQgUW8TokgqDnbb4w1SsSFlSH4OF5fMgoMqXj06JxfwFj/NxqyjVcPV6j1dmhOtnP5gGcPzbc+otmL
+        PP2Sx9tnv2r002fqAuvZj8Z/guP1JQhk1hx8CHURBApW8eZKxCVPonKVSCUricpVblZp7QPJOIPVuHud
+        PgAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>34</value>
   </metadata>
 </root>

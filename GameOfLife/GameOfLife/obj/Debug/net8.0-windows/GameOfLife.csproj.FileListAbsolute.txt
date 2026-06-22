@@ -16,3 +16,4 @@ C:\Users\РПО924\source\repos\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\G
 C:\Users\РПО924\source\repos\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\ref\GameOfLife.dll
 C:\Users\РПО924\source\repos\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.PreGameSettings.resources
 C:\Users\РПО924\source\repos\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.Game.resources
+C:\Users\РПО924\source\repos\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.Properties.Resources.resources

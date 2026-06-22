@@ -92,12 +92,11 @@
             startGameButton.TabIndex = 1;
             startGameButton.Text = "Начать Новую Игру";
             startGameButton.UseVisualStyleBackColor = true;
-            startGameButton.Click += this.startGameButton_Click;
+            startGameButton.Click += startGameButton_Click;
             // 
             // loadGameButton
             // 
             loadGameButton.Dock = DockStyle.Fill;
-            loadGameButton.Enabled = false;
             loadGameButton.Location = new Point(134, 395);
             loadGameButton.Margin = new Padding(4, 5, 4, 5);
             loadGameButton.Name = "loadGameButton";
@@ -105,6 +104,7 @@
             loadGameButton.TabIndex = 2;
             loadGameButton.Text = "Загрузить Сохранение";
             loadGameButton.UseVisualStyleBackColor = true;
+            loadGameButton.Click += loadGameButton_Click;
             // 
             // settingsButton
             // 
@@ -116,6 +116,7 @@
             settingsButton.TabIndex = 3;
             settingsButton.Text = "Настройки";
             settingsButton.UseVisualStyleBackColor = true;
+            settingsButton.Click += settingsButton_Click;
             // 
             // exitButton
             // 
@@ -127,6 +128,7 @@
             exitButton.TabIndex = 4;
             exitButton.Text = "Выход";
             exitButton.UseVisualStyleBackColor = true;
+            exitButton.Click += exitButton_Click;
             // 
             // MainMenu
             // 
