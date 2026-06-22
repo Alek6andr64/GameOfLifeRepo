@@ -44,6 +44,7 @@
             gameTimer = new System.Windows.Forms.Timer(components);
             notifyIcon1 = new NotifyIcon(components);
             toolTip = new ToolTip(components);
+            slRules = new ToolStripStatusLabel();
             statusStrip.SuspendLayout();
             tlpTopMenu.SuspendLayout();
             grpMovesInfo.SuspendLayout();
@@ -68,7 +69,7 @@
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new ToolStripItem[] { slMoveCount, pbGameProgress });
+            statusStrip.Items.AddRange(new ToolStripItem[] { slMoveCount, pbGameProgress, slRules });
             statusStrip.Location = new Point(0, 739);
             statusStrip.Name = "statusStrip";
             statusStrip.Size = new Size(1184, 22);
@@ -360,6 +361,11 @@
             notifyIcon1.Text = "notifyIcon1";
             notifyIcon1.Visible = true;
             // 
+            // slRules
+            // 
+            slRules.Name = "slRules";
+            slRules.Size = new Size(0, 17);
+            // 
             // Game
             // 
             AutoScaleDimensions = new SizeF(9F, 23F);
@@ -415,5 +421,6 @@
         private Button btnZoomOut;
         private Button btnUp;
         private Button btnZoomIn;
+        private ToolStripStatusLabel slRules;
     }
 }

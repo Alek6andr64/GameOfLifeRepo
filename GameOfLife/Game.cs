@@ -43,6 +43,7 @@ namespace GameOfLife
         // Текст цели
         Label lblTargetScore;
 
+        Button btnRestart;
         public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType, short gameType,
                     string surviveRulesStr = "23", string birthRulesStr = "3", bool[,] field = null, int step = 0)
         {
@@ -71,7 +72,8 @@ namespace GameOfLife
             // Настройка элементов игры
             pbGameProgress.Maximum = stepCount;
             lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
-
+            slRules.Text = $"Правила выживания: {surviveRulesStr}, Правила рождения: {birthRulesStr}";
+           
             // Подписка на событие авто симуляции
             gameTimer.Tick += timer_Step;
 
@@ -271,14 +273,27 @@ namespace GameOfLife
 
             lblCellsStatus.Text = $"Текущее число клеток: {startAvailableCells - availableCells}";
 
-            // Текст цели раунда
-            lblTargetScore = new Label();
-            lblTargetScore.AutoSize = true;
-            lblTargetScore.Dock = DockStyle.Fill;
-            lblTargetScore.TextAlign = ContentAlignment.MiddleCenter;
-            tlpTopMenu.Controls.Add(lblTargetScore, 3, 0);
+            if (gameType == 0)
+            {
 
-            lblTargetScore.Text = $"Цель: {targetType} {targetCells.ToString()}";
+                // Текст цели раунда
+                lblTargetScore = new Label();
+                lblTargetScore.AutoSize = true;
+                lblTargetScore.Dock = DockStyle.Fill;
+                lblTargetScore.TextAlign = ContentAlignment.MiddleCenter;
+                tlpTopMenu.Controls.Add(lblTargetScore, 3, 0);
+
+                lblTargetScore.Text = $"Цель: {targetType} {targetCells.ToString()}";
+            } else
+            {
+                btnRestart = new Button();
+                btnRestart.AutoSize = true;
+                btnRestart.Dock = DockStyle.Fill;
+                btnRestart.Click += btnRestart_Click;
+                tlpTopMenu.Controls.Add(btnRestart, 3, 0);
+
+                btnRestart.Text = $"Начать заново";
+            }
         }
 
         private void btnPause_Click(object sender, EventArgs e)
@@ -523,6 +538,38 @@ namespace GameOfLife
             lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
         }
 
+        private void restart_Game()
+        {
+            // Сохраняем позицию и размер текущего окна
+            Point previousLocation = this.Location;
+            Size previousSize = this.Size;
+            FormWindowState previousState = this.WindowState;
+
+            this.Close();
+
+            // Создаем новую игру с теми же параметрами
+            Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType, gameType, rawSurvive, rawBirth);
+            game.StartPosition = FormStartPosition.Manual;
+
+            // Восстанавливаем позицию и размер, если окно не было развернуто
+            if (previousState == FormWindowState.Maximized)
+            {
+                game.WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                game.Location = previousLocation;
+                game.Size = previousSize;
+            }
+
+            game.Show();
+        }
+
+        private void btnRestart_Click(object sender, EventArgs e)
+        {
+            restart_Game();
+        }
+
         private void btnSaveAndRand_Click(object sender, EventArgs e)
         {
             if (!isGameStarted)
@@ -576,29 +623,7 @@ namespace GameOfLife
                 }
                 else
                 {
-                    // Сохраняем позицию и размер текущего окна
-                    Point previousLocation = this.Location;
-                    Size previousSize = this.Size;
-                    FormWindowState previousState = this.WindowState;
-
-                    this.Close();
-
-                    // Создаем новую игру с теми же параметрами
-                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType, gameType, rawSurvive, rawBirth);
-                    game.StartPosition = FormStartPosition.Manual;
-
-                    // Восстанавливаем позицию и размер, если окно не было развернуто
-                    if (previousState == FormWindowState.Maximized)
-                    {
-                        game.WindowState = FormWindowState.Maximized;
-                    }
-                    else
-                    {
-                        game.Location = previousLocation;
-                        game.Size = previousSize;
-                    }
-
-                    game.Show();
+                    restart_Game();
                 }
             }
         }
