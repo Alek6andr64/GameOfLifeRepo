@@ -21,6 +21,7 @@ namespace GameOfLife
         private int step = 0;
         private bool isGameStarted = false;
         private bool isGameFinished = false;
+        private short gameType = 0;
 
         // Двумерный массив кнопок игрового поля
         private Button[,] cells;
@@ -31,7 +32,7 @@ namespace GameOfLife
         // Текст цели
         Label lblTargetScore;
 
-        public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType, bool[,] field = null, int step = 0)
+        public Game(int fieldSize, int availableCells, int stepCount, int targetCells, string targetType, short gameType, bool[,] field = null, int step = 0)
         {
             InitializeComponent();
 
@@ -42,10 +43,10 @@ namespace GameOfLife
             this.targetCells = targetCells;
             this.targetType = targetType;
             this.step = step;
+            this.gameType = gameType;
 
             // Настройка элементов игры
             pbGameProgress.Maximum = stepCount;
-            slMoveCount.Text = $"Осталось ходов: {stepCount - step}  (из {stepCount})";
             lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
 
             // Подписка на событие авто симуляции
@@ -54,6 +55,11 @@ namespace GameOfLife
             // Создаем кнопки
             InitializeLoadingLabel();
             InitializeGameGrid();
+            
+            if (gameType == 1)
+            {
+                pbGameProgress.Visible = false;
+            }
 
             if (field != null)
             {
@@ -239,18 +245,26 @@ namespace GameOfLife
 
         private void game_Step()
         {
-            // Логика одного шага
-            if (step < stepCount)
+            if (gameType == 0)
+            {
+                // Логика одного шага
+                if (step < stepCount)
+                {
+                    step++;
+                    pbGameProgress.Value = step;
+                    slMoveCount.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
+                    simulate();
+                }
+                else
+                {
+                    gameTimer.Stop();
+                    end_Game();
+                }
+            } else
             {
                 step++;
-                pbGameProgress.Value = step;
-                slMoveCount.Text = $"Осталось ходов: {stepCount - step} (из {stepCount})";
+                slMoveCount.Text = $"Ход: {step}";
                 simulate();
-            }
-            else
-            {
-                gameTimer.Stop();
-                end_Game();
             }
         }
 
@@ -301,7 +315,7 @@ namespace GameOfLife
 
             lblCellsStatus.Text = $"Текущее число клеток: {aliveCells}";
 
-            if (aliveCells == 0)
+            if (aliveCells == 0 && gameType == 0)
             {
                 end_Game();
             }
@@ -373,9 +387,9 @@ namespace GameOfLife
 
         private void cell_Click(object sender, EventArgs e)
         {
-            if (!isGameStarted)
+            Button cell = sender as Button;
+            if (!isGameStarted && gameType == 0)
             {
-                Button cell = sender as Button;
                 if (cell != null)
                 {
                     // Красим клетки в противоположный цвет согласно количеству доступных клеток на размещение
@@ -392,6 +406,19 @@ namespace GameOfLife
                         aliveCells--;
                     }
                     lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
+                }
+            }
+            else if (gameType == 1)
+            {
+                if (cell.BackColor == Color.White)
+                {
+                    cell.BackColor = Color.Black;
+                    aliveCells++;
+                }
+                else if (cell.BackColor == Color.Black)
+                {
+                    cell.BackColor = Color.White;
+                    aliveCells--;
                 }
             }
         }
@@ -460,7 +487,8 @@ namespace GameOfLife
                         fieldSize.ToString(),
                         targetCells.ToString(),
                         targetType.ToString(),
-                        step.ToString()
+                        step.ToString(),
+                        gameType.ToString()
                         };
 
                         string? field = "";
@@ -488,7 +516,7 @@ namespace GameOfLife
 
                     this.Close();
 
-                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType);
+                    Game game = new Game(fieldSize, startAvailableCells, stepCount, targetCells, targetType, gameType);
 
                     game.StartPosition = FormStartPosition.Manual;
 

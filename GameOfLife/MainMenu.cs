@@ -31,8 +31,9 @@ namespace GameOfLife
                     int targetCells = int.Parse(lines[4]);
                     string targetType = lines[5];
                     int step = int.Parse(lines[6]);
+                    short gameType = short.Parse(lines[7]);
 
-                    string field = lines[7];
+                    string field = lines[8];
                     int charIndex = 0;
 
                     bool[,] gameField = new bool[fieldSize, fieldSize];
@@ -52,7 +53,7 @@ namespace GameOfLife
 
                     MessageBox.Show("Успешно загружено!");
 
-                    Game game = new Game(fieldSize, 0, stepCount, targetCells, targetType, gameField, step);
+                    Game game = new Game(fieldSize, 0, stepCount, targetCells, targetType, gameType, gameField, step);
                     game.Show();
                 }
                 else

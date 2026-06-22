@@ -26,7 +26,7 @@ namespace GameOfLife
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            Game game = new Game(fieldSize, cellCount, stepCount, targetCells, targetType);
+            Game game = new Game(fieldSize, cellCount, stepCount, targetCells, targetType, (short) comboBox1.SelectedIndex);
             game.Show();
         }
 
@@ -62,7 +62,7 @@ namespace GameOfLife
             {
                 if (text.Length > 1 && text[1] == '=')
                 {
-                    targetType = text.Substring(0, 2); 
+                    targetType = text.Substring(0, 2);
                 }
                 else
                 {
@@ -84,6 +84,19 @@ namespace GameOfLife
             }
 
             textBox3.Text = targetType + targetCells.ToString();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex == 1)
+            {
+                groupBox5.Hide();
+                groupBox7.Hide();
+            } else 
+            {
+                groupBox5.Show();
+                groupBox7.Show();
+            }
         }
     }
 }
