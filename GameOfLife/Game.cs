@@ -19,6 +19,7 @@ namespace GameOfLife
         private string targetType;
         private int step = 0;
         private bool isGameStarted = false;
+        private bool isGameFinished = false;
 
         // Двумерный массив кнопок игрового поля
         private Button[,] cells;
@@ -358,6 +359,9 @@ namespace GameOfLife
             {
                 MessageBox.Show("Вы проиграли :(");
             }
+
+            btnSaveAndRand.Text = "Начать заново";
+            isGameFinished = true;
         }
 
         private void timer_Step(object sender, EventArgs e)
@@ -386,7 +390,7 @@ namespace GameOfLife
                         aliveCells--;
                     }
                     lblCellsStatus.Text = $"Доступно для установки: {availableCells}";
-                }
+                } 
             }
         }
 
@@ -401,19 +405,22 @@ namespace GameOfLife
                         cells[row, col].BackColor = random.Next(0, 2) == 1 ? Color.Black : Color.White;
                     }
                 }
-            } else
+            }
+            else
             {
-                // Останавливаем таймер, если он запущен
-                if (gameTimer.Enabled)
-                    gameTimer.Stop();
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                if (!isGameFinished)
                 {
-                    string[]? lines = new string[]
+                    // Останавливаем таймер, если он запущен
+                    if (gameTimer.Enabled)
+                        gameTimer.Stop();
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog();
+                    saveFileDialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     {
+                        string[]? lines = new string[]
+                        {
                         aliveCells.ToString(),
                         availableCells.ToString(),
                         stepCount.ToString(),
@@ -421,23 +428,29 @@ namespace GameOfLife
                         targetCells.ToString(),
                         targetType.ToString(),
                         step.ToString()
-                    };
+                        };
 
-                    string? field = "";
+                        string? field = "";
 
-                    for (int row = 0; row < fieldSize; row++)
-                    {
-                        for (int col = 0; col < fieldSize; col++)
+                        for (int row = 0; row < fieldSize; row++)
                         {
-                            if (cells[row, col].BackColor == Color.White)
-                               field += "0";
-                            else
-                               field += "1";
+                            for (int col = 0; col < fieldSize; col++)
+                            {
+                                if (cells[row, col].BackColor == Color.White)
+                                    field += "0";
+                                else
+                                    field += "1";
+                            }
                         }
+                        lines = lines.Append(field).ToArray();
+                        File.WriteAllLines(saveFileDialog.FileName, lines);
+                        MessageBox.Show("Сохранено!");
                     }
-                    lines = lines.Append(field).ToArray();
-                    File.WriteAllLines(saveFileDialog.FileName, lines);
-                    MessageBox.Show("Сохранено!");
+                } else
+                {
+                    this.Close();
+                    Game game = new Game(fieldSize, 0, stepCount, targetCells, targetType);
+                    game.Show();
                 }
             }
         }
