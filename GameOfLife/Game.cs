@@ -66,7 +66,7 @@ namespace GameOfLife
             foreach (char c in birthRulesStr) birthRules.Add(c - '0');
 
             // Настраиваем сколько клеток помещается на экране 
-            viewportSize = Math.Min(fieldSize, 70);
+            viewportSize = Math.Min(fieldSize, 45);
             fieldState = new bool[fieldSize, fieldSize];
 
             // Настройка элементов игры
@@ -659,7 +659,7 @@ namespace GameOfLife
         private void btnZoomOut_Click(object sender, EventArgs e)
         {
             // Уменьшение масштаба
-            int maxZoom = Math.Min(fieldSize, 70);
+            int maxZoom = Math.Min(fieldSize, 45);
             if (viewportSize < maxZoom)
             {
                 viewportSize++;
